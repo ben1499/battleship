@@ -1,15 +1,21 @@
-function Ship(length) {
-    const hit = () => {
+export default function Ship(length) {
+    let hitCount = 0;
 
+    const hit = () => {
+        hitCount++;
     }
 
     const isSunk = () => {
-
+        if (hitCount >= length) return true;
+        return false;
     }
 
     return {
         length,
-        hitCount,
+        isHit: false,
+        get hitCount() {
+            return hitCount;
+        },
         hit,
         isSunk,
     }
