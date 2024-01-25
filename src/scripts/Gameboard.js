@@ -12,7 +12,7 @@ export default function Gameboard() {
     }
   }
 
-  const checkMoveValidity = (x, y, size) => {
+  const checkSpaceAvailable = (x, y, size) => {
     for (let i = 0; i < size; i++) {
       if (board[x][y] != null) return false;
       y++;
@@ -21,14 +21,22 @@ export default function Gameboard() {
     return true;
   };
 
-  const placeShip = (x, y, size) => {
-    if (checkMoveValidity(x, y, size) == false) return "Space occupied";
+  const placeShip = (x, y, size, isHorizontal = true) => {
+    if (checkSpaceAvailable(x, y, size) == false) return "Space occupied";
 
     const newShip = Ship(size);
-    for (let i = 0; i < size; i++) {
-      board[x][y] = newShip;
-      y++;
+    if (isHorizontal) {
+      for (let i = 0; i < size; i++) {
+        board[x][y] = newShip;
+        y++;
+      }
+    } else {
+      for (let i = 0; i < size; i++) {
+        board[x][y] = newShip;
+        x++;
+      }
     }
+
   };
 
   const receiveAttack = (x, y) => {
@@ -38,16 +46,17 @@ export default function Gameboard() {
       row = parseInt(row);
       col = parseInt(col);
 
-      if (row == x && col == y) return;
+      if (row == x && col == y) return "Missed";
     }
 
     let item = board[x][y];
 
-    if (item && item.isHit == true) return "Already attacked position";
+    // if (item && item.isHit == true) return false;
     if (typeof item == "object" && item != null) {
       // Reference to the object in the board
       item.hit();
       hitItems.push(`[${x}][${y}]`);
+      return true;
     } else {
       missedCoordinates.push(`${x}-${y}`);
       board[x][y] = "Missed";
@@ -57,7 +66,7 @@ export default function Gameboard() {
   const checkAllSunk = () => {
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
-        if (board[i][j] == null) continue;
+        if (board[i][j] == null || board[i][j] == "Missed") continue;
         else {
           let item = board[i][j];
           if (item.isSunk() == false) return false;

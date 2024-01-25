@@ -1,21 +1,124 @@
 import Gameboard from "./Gameboard";
 import Player from "./Player";
+import {
+  renderEnemyBoard,
+  renderPlayerBoard,
+  markPosition,
+  makeComputerMove,
+  displayShipPlacementDialog,
+} from "./DOMController";
 
-const playerBoard = Gameboard();
-const enemyBoard = Gameboard();
+let player;
+let enemy;
+let moveCount = 0;
+// let playerBoard;
+// let enemyBoard;
 
-playerBoard.placeShip(1, 1, 3);
-playerBoard.placeShip(3, 3, 2);
-playerBoard.placeShip(2, 2, 4);
-playerBoard.placeShip(3, 6, 2);
-playerBoard.placeShip(5, 3, 3);
+function initializeGame() {
+  handlePlaceShip();
 
-enemyBoard.placeShip(1, 3, 4);
-enemyBoard.placeShip(3, 1, 2);
-enemyBoard.placeShip(2, 3, 3);
-enemyBoard.placeShip(4, 3, 1);
-enemyBoard.placeShip(5, 2, 3);
+  // playerBoard = Gameboard();
+  // enemyBoard = Gameboard();
 
-const player = Player(playerBoard);
-const enemy = Player(enemyBoard);
+  // playerBoard.placeShip(1, 1, 3);
+  // playerBoard.placeShip(3, 3, 2);
+  // playerBoard.placeShip(2, 2, 4);
+  // playerBoard.placeShip(3, 6, 2);
+  // playerBoard.placeShip(5, 3, 3);
 
+  // enemyBoard.placeShip(1, 3, 4);
+  // enemyBoard.placeShip(3, 1, 2);
+  // enemyBoard.placeShip(2, 3, 3);
+  // enemyBoard.placeShip(5, 2, 3);
+  // enemyBoard.placeShip(7, 3, 3);
+
+  // player = Player(playerBoard);
+  // enemy = Player(enemyBoard);
+
+  // renderPlayerBoard(playerBoard, player);
+  // renderEnemyBoard(enemyBoard, enemy);
+}
+
+function startGame(shipDetails) {
+  const playerBoard = Gameboard();
+  if (shipDetails.length == 5) {
+    shipDetails.forEach((item) => {
+      playerBoard.placeShip(item.x, item.y, item.size, item.isHorizontal)
+    })
+  }
+
+  const enemyBoard = Gameboard();
+
+  enemyBoard.placeShip(0, 0, 5);
+  enemyBoard.placeShip(3, 7, 4, false);
+  enemyBoard.placeShip(2, 3, 3);
+  enemyBoard.placeShip(5, 2, 3);
+  enemyBoard.placeShip(7, 3, 2);
+
+  player = Player(playerBoard);
+  enemy = Player(enemyBoard);
+
+  renderPlayerBoard(playerBoard, player);
+  renderEnemyBoard(enemyBoard, enemy);
+}
+
+
+const ships = [
+  {
+    name: "Carrier",
+    key: "carrier",
+    size: 5,
+  },
+  {
+    name: "Battleship",
+    key: "battleship",
+    size: 4,
+  },
+  {
+    name: "Destroyer",
+    key: "destroyer",
+    size: 3,
+  },
+  {
+    name: "Submarine",
+    key: "submarine",
+    size: 3,
+  },
+  {
+    name: "Patrol Boat",
+    key: "patrol-boat",
+    size: 2,
+  },
+];
+
+function handlePlaceShip() {
+  const board = [];
+  for (let i = 0; i < 10; i++) {
+    board.push([]);
+    for (let j = 0; j < 10; j++) {
+      board[i].push(null);
+    }
+  }
+
+  displayShipPlacementDialog(board, ships);
+}
+
+
+function makeMove(x, y, DOMBoard, isShip) {
+  if (moveCount % 2 == 0) {
+    enemy.attack(x, y);
+    markPosition(x, y, DOMBoard, isShip);
+    moveCount++;
+    makeComputerMove(player);
+  } else {
+    markPosition(x, y, DOMBoard, isShip);
+    moveCount++;
+  }
+}
+
+function restartGame() {
+  moveCount = 0;
+  initalizeGame();
+}
+
+export { initializeGame, makeMove, moveCount, restartGame, startGame };

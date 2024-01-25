@@ -1,7 +1,4 @@
-// import Gameboard from "./Gameboard";
-
 export default function Player(board) {
-//   const board = Gameboard();
   const hitCoordinates = [];
 
   const attack = (x, y) => {
@@ -21,14 +18,23 @@ export default function Player(board) {
     const x = generateRandomNumber();
     const y = generateRandomNumber();
 
-    if (checkMoveValidity(x, y) == true) board.receiveAttack(x, y);
-    else randomAttack();
+    if (checkMoveValidity(x, y) == true) {
+      attack(x, y);
+      // console.log("Computer coord value");
+      // console.log(board.board[x][y])
 
-    hitCoordinates.push(`${x}-${y}`);
+      // if (board.board[x][y] != "Missed") {
+
+      // }
+      hitCoordinates.push(`${x}-${y}`);
+    } else randomAttack();
+
+    return hitCoordinates[hitCoordinates.length - 1].split("-")
+     
   };
 
   return {
     attack,
     randomAttack,
-  }
+  };
 }
