@@ -126,6 +126,8 @@ function makeComputerMove(player) {
   const playerBoard = document.querySelectorAll("#player-board > div");
   const coord = player.randomAttack();
   const [x, y] = coord;
+  console.log(x, typeof x);
+  console.log(y, typeof y);
   playerBoard[x].childNodes[y].click();
 }
 
