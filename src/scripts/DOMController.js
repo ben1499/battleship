@@ -1,18 +1,21 @@
 import { makeMove, moveCount, startGame, restartGame } from "./gameController";
 
+const body = document.querySelector("body");
+const backgroundMask = document.createElement("div");
+backgroundMask.classList.add("background-blur", "visible");
+
+body.append(backgroundMask);
+
 const content = document.querySelector("#content");
 
 const gameContainer = document.createElement("div");
-
 gameContainer.classList.add("game-container");
 
 const titleContainer = document.createElement("div");
 titleContainer.classList.add("title-container");
 titleContainer.textContent = "Battleship";
 
-content.append(titleContainer);
-
-content.appendChild(gameContainer);
+content.append(titleContainer, gameContainer);
 
 function renderPlayerBoard(playerBoard) {
   const boardContainer = document.createElement("div");
@@ -25,7 +28,7 @@ function renderPlayerBoard(playerBoard) {
       cell.classList.add("cell");
       let isShip = false;
 
-      if (cellItem != null) cell.style.backgroundColor = "orange";
+      if (cellItem != null) cell.style.backgroundColor = "#fca5a5";
 
       row.appendChild(cell);
 
@@ -50,7 +53,10 @@ function renderPlayerBoard(playerBoard) {
     row.style.display = "flex";
     boardContainer.appendChild(row);
   });
-
+  const boardLabel = document.createElement("div");
+  boardLabel.textContent = "Your board";
+  boardLabel.classList.add("board-label");
+  boardContainer.append(boardLabel);
   gameContainer.appendChild(boardContainer);
 }
 
@@ -97,6 +103,10 @@ function renderEnemyBoard(enemyBoard, enemy) {
     row.style.display = "flex";
     boardContainer.appendChild(row);
   });
+  const boardLabel = document.createElement("div");
+  boardLabel.textContent = "Enemy's board";
+  boardLabel.classList.add("board-label");
+  boardContainer.append(boardLabel);
 
   gameContainer.appendChild(boardContainer);
 }
@@ -104,7 +114,7 @@ function renderEnemyBoard(enemyBoard, enemy) {
 function markPosition(x, y, board, isShip = false) {
   const cell = board[x].childNodes[y];
   if (isShip) cell.textContent = "X";
-  else cell.style.backgroundColor = "#ffa99a";
+  else cell.style.backgroundColor = "#ffedd5";
 }
 
 function highlightSunkShip(ship, board, isEnemyBoard = true) {
@@ -116,7 +126,7 @@ function highlightSunkShip(ship, board, isEnemyBoard = true) {
     row.forEach((item, itemIndex) => {
       if (item == ship) {
         boardNodeList[rowIndex].childNodes[itemIndex].style.backgroundColor =
-          "blue";
+          "#f87171";
       }
     });
   });
@@ -126,17 +136,13 @@ function makeComputerMove(player) {
   const playerBoard = document.querySelectorAll("#player-board > div");
   const coord = player.randomAttack();
   const [x, y] = coord;
-  console.log(x, typeof x);
-  console.log(y, typeof y);
   playerBoard[x].childNodes[y].click();
 }
 
 function resetDOM() {
   gameContainer.textContent = "";
   const dialog = document.querySelector(".result-dialog");
-
   dialog.remove();
-
   restartGame();
 }
 
@@ -151,20 +157,17 @@ function displayGameWinner(winner) {
   else result.textContent = "You lost";
 
   playButton.textContent = "Play Again";
-
   playButton.addEventListener("click", resetDOM);
 
   btnContainer.appendChild(playButton);
-
   resultDialog.append(result, btnContainer);
+
+  backgroundMask.classList.add("visible");
 
   content.append(resultDialog);
 }
 
 function displayShipPlacementDialog(board, ships) {
-  let shipIndex = 0;
-  // let isShipHorizontal = true;
-  let isPositionValid = true;
   let placedShips = [];
 
   const body = document.querySelector("body");
@@ -178,9 +181,6 @@ function displayShipPlacementDialog(board, ships) {
   const selectedShipText = document.createElement("div");
   selectedShipText.textContent = "";
 
-  // const rotateBtn = document.createElement("button");
-  // rotateBtn.textContent = "Rotate";
-
   const selectionContainer = document.createElement("div");
   selectionContainer.setAttribute("id", "selection-container");
   const boardContainer = document.createElement("div");
@@ -190,10 +190,13 @@ function displayShipPlacementDialog(board, ships) {
   shipsContainer.setAttribute("id", "ships-container");
 
   const actionsContainer = document.createElement("div");
+  actionsContainer.classList.add("action-buttons");
   const resetBtn = document.createElement("button");
   resetBtn.textContent = "Reset";
   const startBtn = document.createElement("button");
   startBtn.textContent = "Start";
+
+  startBtn.setAttribute("disabled", "true");
 
   actionsContainer.append(resetBtn, startBtn);
 
@@ -204,7 +207,6 @@ function displayShipPlacementDialog(board, ships) {
   const checkPositionFree = (x, y, size, isShipHorizontal = true) => {
     const boardNodeList = document.querySelectorAll("#selection-board > div");
 
-    // [2][3] size = 5
     if (isShipHorizontal) {
       for (let i = y; i < y + draggedShipSize; i++) {
         const cell = boardNodeList[x].childNodes[i];
@@ -219,7 +221,6 @@ function displayShipPlacementDialog(board, ships) {
 
     let incrementedCoord;
 
-    // [2][3] size = 5
     if (isShipHorizontal) {
       incrementedCoord = y + size;
 
@@ -227,7 +228,6 @@ function displayShipPlacementDialog(board, ships) {
         for (let i = y; i < incrementedCoord; i++) {
           const cell = boardNodeList[x].childNodes[i];
           if (cell.classList.contains("placed-ship")) return false;
-          // else break;
         }
 
         let upperRow;
@@ -237,7 +237,6 @@ function displayShipPlacementDialog(board, ships) {
           for (let i = y; i < y + size; i++) {
             const cell = boardNodeList[upperRow].childNodes[i];
             if (cell.classList.contains("placed-ship")) return false;
-            // else return true;
           }
         }
 
@@ -247,7 +246,6 @@ function displayShipPlacementDialog(board, ships) {
           for (let i = y; i < y + size; i++) {
             const cell = boardNodeList[lowerRow].childNodes[i];
             if (cell.classList.contains("placed-ship")) return false;
-            // else return true;
           }
         }
 
@@ -385,7 +383,6 @@ function displayShipPlacementDialog(board, ships) {
   };
 
   const changePlacedShipOrientation = (shipType, isHorizontal) => {
-    console.log(isHorizontal);
     placedShips = placedShips.map((item) =>
       item.name == shipType ? { ...item, isHorizontal } : item
     );
@@ -400,7 +397,6 @@ function displayShipPlacementDialog(board, ships) {
 
     const size = parseInt(e.target.dataset.size);
     const isHorizontal = Boolean(parseInt(e.target.dataset.isH));
-    console.log(isHorizontal);
 
     if (isHorizontal) {
       let firstCell = boardNodeList[startX].childNodes[startY];
@@ -419,7 +415,7 @@ function displayShipPlacementDialog(board, ships) {
           delete cell.dataset.isH;
           shipType = cell.dataset.shipType;
           delete cell.dataset.shipType;
-          cell.style.backgroundColor = "limegreen";
+          cell.style.backgroundColor = "white";
         }
 
         for (let i = startX; i < startX + size; i++) {
@@ -429,11 +425,10 @@ function displayShipPlacementDialog(board, ships) {
           cell.dataset.start = `${startX}-${startY}`;
           cell.dataset.isH = "0"; // false
           cell.dataset.shipType = shipType;
-          cell.style.backgroundColor = "red";
+          cell.style.backgroundColor = "#f87171";
         }
 
         changePlacedShipOrientation(shipType, false);
-        console.log(placedShips);
       } else {
         firstCell.classList.add("placed-ship");
         secondCell.classList.add("placed-ship");
@@ -455,7 +450,7 @@ function displayShipPlacementDialog(board, ships) {
           delete cell.dataset.isH;
           shipType = cell.dataset.shipType;
           delete cell.dataset.shipType;
-          cell.style.backgroundColor = "limegreen";
+          cell.style.backgroundColor = "white";
         }
 
         for (let i = startY; i < startY + size; i++) {
@@ -465,18 +460,15 @@ function displayShipPlacementDialog(board, ships) {
           cell.dataset.start = `${startX}-${startY}`;
           cell.dataset.isH = "1"; // true
           cell.dataset.shipType = shipType;
-          cell.style.backgroundColor = "red";
+          cell.style.backgroundColor = "#f87171";
         }
 
         changePlacedShipOrientation(shipType, true);
-        console.log(placedShips);
       } else {
         firstCell.classList.add("placed-ship");
         secondCell.classList.add("placed-ship");
       }
     }
-
-    // e.target.removeEventListener("click", handleShipClick);
   };
 
   ships.forEach((item) => {
@@ -491,6 +483,7 @@ function displayShipPlacementDialog(board, ships) {
       shipRow.appendChild(cell);
       shipRow.setAttribute("draggable", "true");
       shipRow.dataset.size = item.size;
+      shipRow.classList.add("draggable-ship");
     }
 
     shipRow.addEventListener("dragstart", (e) => {
@@ -518,7 +511,7 @@ function displayShipPlacementDialog(board, ships) {
         y = parseInt(y);
 
         const isPositionValid = checkPositionFree(x, y, draggedShipSize);
-        if (isPositionValid) cell.style.backgroundColor = "blue";
+        if (isPositionValid) cell.style.backgroundColor = "#fca5a5";
       });
 
       cell.addEventListener("dragleave", (e) => {
@@ -528,8 +521,8 @@ function displayShipPlacementDialog(board, ships) {
 
         const isPositionValid = checkPositionFree(x, y, draggedShipSize);
 
-        if (isPositionValid) cell.style.backgroundColor = "limegreen";
-        else cell.style.backgroundColor = "red";
+        if (isPositionValid) cell.style.backgroundColor = "white";
+        else cell.style.backgroundColor = "#f87171";
       });
 
       cell.addEventListener("drop", (e) => {
@@ -539,8 +532,7 @@ function displayShipPlacementDialog(board, ships) {
           "#selection-board > div"
         );
 
-        // console.log("Dropped");
-        // console.log(cell.dataset.id);
+        if (placedShips.length == 4) startBtn.removeAttribute("disabled");
 
         let [x, y] = cell.dataset.id.split("-");
 
@@ -549,11 +541,8 @@ function displayShipPlacementDialog(board, ships) {
 
         const isPositionValid = checkPositionValidity(x, y, draggedShipSize);
 
-        console.log(isPositionValid);
-
         if (isPositionValid) {
           for (let i = y; i < y + draggedShipSize; i++) {
-            console.log(i);
             const cell = boardNodeList[x].childNodes[i];
             cell.dataset.start = `${x}-${y}`;
             cell.dataset.size = draggedShipSize;
@@ -561,7 +550,7 @@ function displayShipPlacementDialog(board, ships) {
             // Is horizontal - 1 for true
             cell.dataset.isH = "1";
 
-            cell.style.backgroundColor = "red";
+            cell.style.backgroundColor = "#f87171";
             cell.classList.add("placed-ship");
             cell.addEventListener("click", handleShipClick);
           }
@@ -573,9 +562,8 @@ function displayShipPlacementDialog(board, ships) {
             isHorizontal: true,
           });
           draggedItem.parentNode.removeChild(draggedItem);
-          console.log(placedShips);
         } else {
-          cell.style.backgroundColor = "limegreen";
+          cell.style.backgroundColor = "white";
         }
       });
     });
@@ -591,9 +579,9 @@ function displayShipPlacementDialog(board, ships) {
 
   startBtn.addEventListener("click", () => {
     if (placedShips.length == 5) {
-      console.log("Start");
-      dialog.classList.add("hidden");
       startGame(placedShips);
+      dialog.remove();
+      backgroundMask.classList.remove("visible");
     }
   });
 
@@ -602,7 +590,6 @@ function displayShipPlacementDialog(board, ships) {
   dialog.append(
     heading,
     selectedShipText,
-    // rotateBtn,
     selectionContainer,
     actionsContainer
   );

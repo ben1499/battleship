@@ -11,8 +11,8 @@ import {
 let player;
 let enemy;
 let moveCount = 0;
-// let playerBoard;
-// let enemyBoard;
+let playerBoard;
+let enemyBoard;
 
 function initializeGame() {
   handlePlaceShip();
@@ -40,14 +40,14 @@ function initializeGame() {
 }
 
 function startGame(shipDetails) {
-  const playerBoard = Gameboard();
+  playerBoard = Gameboard();
   if (shipDetails.length == 5) {
     shipDetails.forEach((item) => {
-      playerBoard.placeShip(item.x, item.y, item.size, item.isHorizontal)
-    })
+      playerBoard.placeShip(item.x, item.y, item.size, item.isHorizontal);
+    });
   }
 
-  const enemyBoard = Gameboard();
+  enemyBoard = Gameboard();
 
   enemyBoard.placeShip(0, 0, 5);
   enemyBoard.placeShip(3, 7, 4, false);
@@ -61,7 +61,6 @@ function startGame(shipDetails) {
   renderPlayerBoard(playerBoard, player);
   renderEnemyBoard(enemyBoard, enemy);
 }
-
 
 const ships = [
   {
@@ -103,13 +102,20 @@ function handlePlaceShip() {
   displayShipPlacementDialog(board, ships);
 }
 
+let isGameWon = false;
 
 function makeMove(x, y, DOMBoard, isShip) {
   if (moveCount % 2 == 0) {
     enemy.attack(x, y);
     markPosition(x, y, DOMBoard, isShip);
     moveCount++;
-    makeComputerMove(player);
+    // To check only after a certain number of moves, as the method is time consuming
+    if (moveCount > 34) {
+      isGameWon = enemyBoard.checkAllSunk();
+    }
+    console.log("Game won?");
+    console.log(isGameWon);
+    if (!isGameWon) makeComputerMove(player);
   } else {
     markPosition(x, y, DOMBoard, isShip);
     moveCount++;
@@ -118,7 +124,12 @@ function makeMove(x, y, DOMBoard, isShip) {
 
 function restartGame() {
   moveCount = 0;
-  initalizeGame();
+  player = null;
+  enemy = null;
+  playerBoard = null;
+  enemyBoard = null;
+  isGameWon = false;
+  initializeGame();
 }
 
 export { initializeGame, makeMove, moveCount, restartGame, startGame };
