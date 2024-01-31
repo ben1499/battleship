@@ -31,8 +31,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 50px;
-  height: 700px;
+  gap: 35px;
+  height: 750px;
   width: 800px;
   border-radius: 6px;
   z-index: 3;
@@ -58,6 +58,11 @@ body {
 
 .setup-dialog .cell {
   background-color: white;
+}
+
+.selected-ship-text {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 18px;
 }
 
 #selection-container {
@@ -88,6 +93,22 @@ body {
   display: inline-block;
 }
 
+.info-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.info-container > i {
+  font-size: 30px;
+  color: #FDE767;
+}
+
+.info-container > div {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 18px;
+}
+
 .action-buttons {
   display: flex;
   gap: 25px;
@@ -102,8 +123,12 @@ body {
   background-color: #f0f9ff;
 }
 
-.action-buttons button:hover {
+.action-buttons button:hover:not(:disabled) {
   opacity: 0.9;
+}
+
+.action-buttons button:disabled {
+  color: #f87171;
 }
 
 #selection-board .placed-ship {

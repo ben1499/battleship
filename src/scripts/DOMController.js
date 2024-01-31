@@ -179,7 +179,8 @@ function displayShipPlacementDialog(board, ships) {
   heading.textContent = "Battleship Game";
 
   const selectedShipText = document.createElement("div");
-  selectedShipText.textContent = "";
+  selectedShipText.classList.add("selected-ship-text");
+  selectedShipText.textContent = "Place ships on the board";
 
   const selectionContainer = document.createElement("div");
   selectionContainer.setAttribute("id", "selection-container");
@@ -199,6 +200,17 @@ function displayShipPlacementDialog(board, ships) {
   startBtn.setAttribute("disabled", "true");
 
   actionsContainer.append(resetBtn, startBtn);
+
+  const infoContainer = document.createElement("div");
+  const infoIcon = document.createElement("i");
+
+  infoContainer.classList.add('info-container')
+  infoIcon.classList.add("fa-solid", "fa-lightbulb")
+
+  const info = document.createElement("div");
+  info.textContent = "Click on a ship in the board to change orientation"
+
+  infoContainer.append(infoIcon, info)
 
   let draggedShip;
   let draggedShipSize;
@@ -490,7 +502,10 @@ function displayShipPlacementDialog(board, ships) {
       draggedItem = e.target;
       draggedShip = e.target.classList[0];
       draggedShipSize = parseInt(e.target.dataset.size);
+      selectedShipText.textContent = `Placing ${draggedShip.toUpperCase()}`
+      console.log(draggedShip);
     });
+
     shipsContainer.append(shipRow);
   });
 
@@ -532,7 +547,12 @@ function displayShipPlacementDialog(board, ships) {
           "#selection-board > div"
         );
 
-        if (placedShips.length == 4) startBtn.removeAttribute("disabled");
+        if (placedShips.length < 4) selectedShipText.textContent = "Place ships on the board";
+
+        if (placedShips.length == 4) {
+          startBtn.removeAttribute("disabled");
+          selectedShipText.textContent = "Click Start to Play"
+        }
 
         let [x, y] = cell.dataset.id.split("-");
 
@@ -591,6 +611,7 @@ function displayShipPlacementDialog(board, ships) {
     heading,
     selectedShipText,
     selectionContainer,
+    infoContainer,
     actionsContainer
   );
 
