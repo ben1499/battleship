@@ -16,27 +16,6 @@ let enemyBoard;
 
 function initializeGame() {
   handlePlaceShip();
-
-  // playerBoard = Gameboard();
-  // enemyBoard = Gameboard();
-
-  // playerBoard.placeShip(1, 1, 3);
-  // playerBoard.placeShip(3, 3, 2);
-  // playerBoard.placeShip(2, 2, 4);
-  // playerBoard.placeShip(3, 6, 2);
-  // playerBoard.placeShip(5, 3, 3);
-
-  // enemyBoard.placeShip(1, 3, 4);
-  // enemyBoard.placeShip(3, 1, 2);
-  // enemyBoard.placeShip(2, 3, 3);
-  // enemyBoard.placeShip(5, 2, 3);
-  // enemyBoard.placeShip(7, 3, 3);
-
-  // player = Player(playerBoard);
-  // enemy = Player(enemyBoard);
-
-  // renderPlayerBoard(playerBoard, player);
-  // renderEnemyBoard(enemyBoard, enemy);
 }
 
 function startGame(shipDetails) {
