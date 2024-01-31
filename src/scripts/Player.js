@@ -1,10 +1,7 @@
 export default function Player(board) {
   const hitCoordinates = [];
-  const shipHitCoordinates = [];
 
   const attack = (x, y) => {
-    console.log("Attack coord");
-    console.log(x, y);
     board.receiveAttack(x, y);
   };
 
@@ -18,8 +15,6 @@ export default function Player(board) {
   };
 
   let isPrevItemHit = false;
-  let lastHitItem;
-  // let moveCount = 0;
   let itemHitHistory = [];
   let isAttackVertical = false;
 
@@ -76,14 +71,10 @@ export default function Player(board) {
           }
         }
       }
-      console.log("Computer coord value");
-      console.log(board.board[x][y]);
-
       const item = board.board[x][y];
 
       if (item != "Missed") {
         isPrevItemHit = true;
-        lastHitItem = `${x}-${y}`;
         itemHitHistory.push(true);
       } else {
         // if (isAttackVertical) isAttackVertical = false;
@@ -93,7 +84,6 @@ export default function Player(board) {
       hitCoordinates.push(`${x}-${y}`);
     } else randomAttack();
 
-    // moveCount++;
     return hitCoordinates[hitCoordinates.length - 1].split("-");
   };
 

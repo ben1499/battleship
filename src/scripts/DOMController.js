@@ -91,7 +91,6 @@ function renderEnemyBoard(enemyBoard, enemy) {
 
             if (enemyBoard.checkAllSunk()) {
               displayGameWinner("player");
-              console.log("You win");
             }
           }
         } else {
@@ -503,7 +502,6 @@ function displayShipPlacementDialog(board, ships) {
       draggedShip = e.target.classList[0];
       draggedShipSize = parseInt(e.target.dataset.size);
       selectedShipText.textContent = `Placing ${draggedShip.toUpperCase()}`
-      console.log(draggedShip);
     });
 
     shipsContainer.append(shipRow);

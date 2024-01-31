@@ -12,7 +12,6 @@ export default function Ship(length) {
 
     return {
         length,
-        // isHit: false,
         get hitCount() {
             return hitCount;
         },

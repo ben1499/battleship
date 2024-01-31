@@ -49,11 +49,27 @@ function startGame(shipDetails) {
 
   enemyBoard = Gameboard();
 
-  enemyBoard.placeShip(0, 0, 5);
-  enemyBoard.placeShip(3, 7, 4, false);
-  enemyBoard.placeShip(2, 3, 3);
-  enemyBoard.placeShip(5, 2, 3);
-  enemyBoard.placeShip(7, 3, 2);
+  const randomNumber = Math.floor(Math.random() * 3);
+
+  if (randomNumber == 0) {
+    enemyBoard.placeShip(0, 0, 5);
+    enemyBoard.placeShip(3, 7, 4, false);
+    enemyBoard.placeShip(2, 3, 3);
+    enemyBoard.placeShip(5, 2, 3);
+    enemyBoard.placeShip(7, 3, 2);
+  } else if (randomNumber == 1) {
+    enemyBoard.placeShip(5, 0, 5, false);
+    enemyBoard.placeShip(2, 3, 4);
+    enemyBoard.placeShip(6, 6, 3, false);
+    enemyBoard.placeShip(0, 7, 3);
+    enemyBoard.placeShip(4, 4, 2);
+  } else {
+    enemyBoard.placeShip(1, 2, 5);
+    enemyBoard.placeShip(4, 0, 4, false);
+    enemyBoard.placeShip(4, 5, 3);
+    enemyBoard.placeShip(8, 3, 3);
+    enemyBoard.placeShip(8, 8, 2, false);
+  }
 
   player = Player(playerBoard);
   enemy = Player(enemyBoard);
@@ -113,8 +129,6 @@ function makeMove(x, y, DOMBoard, isShip) {
     if (moveCount > 34) {
       isGameWon = enemyBoard.checkAllSunk();
     }
-    console.log("Game won?");
-    console.log(isGameWon);
     if (!isGameWon) makeComputerMove(player);
   } else {
     markPosition(x, y, DOMBoard, isShip);
