@@ -12,4 +12,4 @@ Battleship Game built using JavaScript with Webpack as the build tool
 
 ## Demo
 
-https://ben1499.github.io/battleship/
+https://ben1499.github.io/battleship/ 
