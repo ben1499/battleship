@@ -545,12 +545,7 @@ function displayShipPlacementDialog(board, ships) {
           "#selection-board > div"
         );
 
-        if (placedShips.length < 4) selectedShipText.textContent = "Place ships on the board";
-
-        if (placedShips.length == 4) {
-          startBtn.removeAttribute("disabled");
-          selectedShipText.textContent = "Click Start to Play"
-        }
+        if (placedShips.length <= 4) selectedShipText.textContent = "Place ships on the board";
 
         let [x, y] = cell.dataset.id.split("-");
 
@@ -581,8 +576,15 @@ function displayShipPlacementDialog(board, ships) {
           });
           draggedItem.parentNode.removeChild(draggedItem);
         } else {
-          cell.style.backgroundColor = "white";
+          // Preserve marking of already placed ship
+          if (cell.classList.contains('placed-ship')) return;
+          else cell.style.backgroundColor = "white";
         }
+
+        if (placedShips.length == 5) {
+          startBtn.removeAttribute("disabled");
+          selectedShipText.textContent = "Click Start to Play"
+        }  
       });
     });
 
